@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>커플앱 디자인 시안 · 3 directions</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #efece6; }
+  #root { height: 100%; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="styles.jsx"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="helpers.jsx"></script>
+<script type="text/babel" src="screens-a.jsx"></script>
+<script type="text/babel" src="screens-b.jsx"></script>
+<script type="text/babel" src="screens-c.jsx"></script>
+<script type="text/babel" src="error-screens.jsx"></script>
+<script type="text/babel" src="typography.jsx"></script>
+
+<script type="text/babel">
+  // Direction labels — shown as artboard labels and in the intro section.
+  const DIRS = [
+    { id: 'a', name: 'Warm Diary', tagline: '따뜻한 손글씨 · 종이 다이어리', mood: '온도감, 아날로그, 손맛' },
+    { id: 'b', name: 'Modern Clean', tagline: '미니멀 · 깔끔한 카드 그리드', mood: '명료함, 신뢰감, Toss풍' },
+    { id: 'c', name: 'Memory Pocket', tagline: '컬러풀 · 스티커북 게임화', mood: '발랄함, 수집욕, MZ' },
+  ];
+
+  // Intro / brief artboard — shown at the very top of the canvas.
+  function IntroBoard() {
+    return (
+      <div style={{ width: 1320, height: 720, background: '#FFFFFF', padding: 56, fontFamily: '"Pretendard", -apple-system, sans-serif', color: '#1f2024', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position:'absolute', top: 56, right: 56, fontSize: 12, letterSpacing: 1.5, color: '#9098A4' }}>COUPLE APP · DESIGN PROPOSALS · 2026.05</div>
+        <div style={{ fontSize: 14, fontWeight: 600, color:'#FF6F91', letterSpacing: 1 }}>3개 디자인 시안</div>
+        <div style={{ fontSize: 56, fontWeight: 800, marginTop: 8, lineHeight: 1.1, letterSpacing: -1 }}>흩어진 톤을<br/>하나로 묶는 세 방향</div>
+        <div style={{ fontSize: 17, color:'#5F6470', marginTop: 18, maxWidth: 720, lineHeight: 1.6 }}>
+          현재 코드베이스(30+ 페이지) 전체에 일관되게 적용 가능한 3가지 디자인 방향입니다.
+          기존 플로우 · 추가 권장 플로우 · 에러/엣지 케이스를 동일한 화면 세트로 비교할 수 있도록 구성했어요.
+          섹션별로 좌→우 순서: <b>A. Warm Diary</b> · <b>B. Modern Clean</b> · <b>C. Memory Pocket</b>.
+        </div>
+
+        <div style={{ position:'absolute', left: 56, right: 56, bottom: 56, display: 'grid', gridTemplateColumns:'repeat(3, 1fr)', gap: 24 }}>
+          {DIRS.map((d, i)=>{
+            const palettes = [
+              { bg:'#FBF6EC', ink:'#2A241D', accent:'#E76F51', a2:'#4F8FA6' },
+              { bg:'#F4F5F7', ink:'#14161A', accent:'#3461F0', a2:'#FF6F91' },
+              { bg:'#FFF5E8', ink:'#2B1B3E', accent:'#FF7A6B', a2:'#8FD7B8' },
+            ][i];
+            return (
+              <div key={d.id} style={{ padding: 22, borderRadius: 16, background: palettes.bg, border: '1px solid rgba(0,0,0,0.06)' }}>
+                <div style={{ display:'flex', alignItems:'baseline', gap: 8 }}>
+                  <div style={{ fontSize: 36, fontWeight: 800, color: palettes.accent }}>{String.fromCharCode(65+i)}</div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: palettes.ink }}>{d.name}</div>
+                </div>
+                <div style={{ fontSize: 13, color: palettes.ink, opacity: 0.7, marginTop: 6 }}>{d.tagline}</div>
+                <div style={{ marginTop: 14, display:'flex', gap: 8 }}>
+                  {[palettes.accent, palettes.a2, palettes.ink, palettes.bg].map((c,j)=>(
+                    <div key={j} style={{ width: 28, height: 28, borderRadius: 8, background: c, border: '1px solid rgba(0,0,0,0.08)' }}/>
+                  ))}
+                </div>
+                <div style={{ fontSize: 11, color: palettes.ink, opacity: 0.55, marginTop: 12, textTransform:'uppercase', letterSpacing: 1 }}>{d.mood}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // — sections —
+  // Each section places 3 artboards (A/B/C) of the same screen type.
+  // NOTE: called as `{screenRow({...})}` (not <ScreenRow/>) so the returned array
+  // becomes direct children of DCSection — DesignCanvas only flattens Fragments,
+  // not function components, so wrapping these in a component would hide them.
+  function screenRow({ A, B, C, idA='a', idB='b', idC='c' }) {
+    return [
+      <DCArtboard key="a" id={idA} label="A · Warm Diary"   width={402} height={874}><A/></DCArtboard>,
+      <DCArtboard key="b" id={idB} label="B · Modern Clean" width={402} height={874}><B/></DCArtboard>,
+      <DCArtboard key="c" id={idC} label="C · Memory Pocket" width={402} height={874}><C/></DCArtboard>,
+    ];
+  }
+
+  function App() {
+    return (
+      <DesignCanvas>
+        <DCSection id="brief" title="브리프" subtitle="3개 시안 비교 · 동일한 화면 세트를 좌→우로 늘어놓아 톤·정보구조·인터랙션 차이를 보여줍니다">
+          <DCArtboard id="intro" label="시안 한눈에" width={1320} height={720}>
+            <IntroBoard/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="onboarding" title="01 · 온보딩 / 파트너 연결" subtitle="첫 진입 → 코드 입력 → 솔로 시작 옵션">
+          {screenRow({A: A_Onboarding, B: B_Onboarding, C: C_Onboarding})}
+        </DCSection>
+
+        <DCSection id="home" title="02 · 홈 (오늘의 여행)" subtitle="D-day · 오늘의 액션 · 같은 날 추억">
+          {screenRow({A: A_Today, B: B_Today, C: C_Today})}
+        </DCSection>
+
+        <DCSection id="map" title="03 · 지도 (나의 여행)" subtitle="지역 색칠 · 국가별 탭 · 진행률 표시">
+          {screenRow({A: A_Map, B: B_Map, C: C_Map})}
+        </DCSection>
+
+        <DCSection id="add" title="04 · 새 추억 추가" subtitle="장소 → 사진 → 메모 → 메타 · 한 화면으로 통합">
+          {screenRow({A: A_AddPlace, B: B_AddPlace, C: C_AddPlace})}
+        </DCSection>
+
+        <DCSection id="timeline" title="05 · 타임라인 / 추억 피드" subtitle="세로 다이어리 · 카드 리스트 · 폴라로이드 그리드">
+          {screenRow({A: A_Timeline, B: B_Timeline, C: C_Timeline})}
+        </DCSection>
+
+        <DCSection id="memory" title="06 · 메모리 상세" subtitle="히어로 사진 · 본문 · 파트너 코멘트">
+          {screenRow({A: A_MemoryDetail, B: B_MemoryDetail, C: C_MemoryDetail})}
+        </DCSection>
+
+        <DCSection id="calendar" title="07 · 캘린더 / 기념일" subtitle="월별 뷰 + D-day 카드 + 알림 설정">
+          {screenRow({A: A_Calendar, B: B_Calendar, C: C_Calendar})}
+        </DCSection>
+
+        <DCSection id="profile" title="08 · 프로필 / My" subtitle="커플 카드 · 통계 · 설정 진입">
+          {screenRow({A: A_Profile, B: B_Profile, C: C_Profile})}
+        </DCSection>
+
+        <DCSection id="notif" title="09 · 알림" subtitle="새 알림 · 이전 알림 · 우선순위">
+          {screenRow({A: A_Notifications, B: B_Notifications, C: C_Notifications})}
+        </DCSection>
+
+        <DCSection id="new-flows" title="10 · 추가되면 좋을 플로우" subtitle="현재 코드에 약한/없는 영역. 시안별로 가장 잘 어울리는 한 가지를 제안합니다.">
+          <DCArtboard id="a-wishlist" label="A · 가고 싶은 곳 (Wishlist)"  width={402} height={874}><A_Wishlist/></DCArtboard>
+          <DCArtboard id="b-capsule" label="B · 타임캡슐 (미래의 우리)"  width={402} height={874}><B_TimeCapsule/></DCArtboard>
+          <DCArtboard id="c-solo" label="C · 솔로 모드 (연결 전)"  width={402} height={874}><C_SoloMode/></DCArtboard>
+        </DCSection>
+
+        <DCSection id="err-404" title="11 · 에러 페이지 · 404" subtitle="페이지를 찾을 수 없을 때">
+          {screenRow({A: A_404, B: B_404, C: C_404})}
+        </DCSection>
+
+        <DCSection id="err-offline" title="12 · 에러 페이지 · 오프라인" subtitle="네트워크 연결 끊김 + 로컬 드래프트 보존">
+          {screenRow({A: A_Offline, B: B_Offline, C: C_Offline})}
+        </DCSection>
+
+        <DCSection id="err-perm" title="13 · 권한 거부" subtitle="카메라/위치 권한이 꺼져 있을 때">
+          {screenRow({A: A_Permission, B: B_Permission, C: C_Permission})}
+        </DCSection>
+
+        <DCSection id="empty" title="14 · 빈 상태 (첫 사용자)" subtitle="아직 데이터가 없을 때 무엇을 보여줄까">
+          {screenRow({A: A_Empty, B: B_Empty, C: C_Empty})}
+        </DCSection>
+
+        <DCSection id="typography" title="15 · 타이포그래피" subtitle="시안별 폰트 페어링 · 타입 스케일 · 사용 규칙">
+          <DCArtboard id="a-typo" label="A · Warm Diary"   width={720} height={1040}><TypoSheetA/></DCArtboard>
+          <DCArtboard id="b-typo" label="B · Modern Clean" width={720} height={1040}><TypoSheetB/></DCArtboard>
+          <DCArtboard id="c-typo" label="C · Memory Pocket" width={720} height={1040}><TypoSheetC/></DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

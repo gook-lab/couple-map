@@ -1,0 +1,507 @@
+@import "tailwindcss";
+
+@reference {
+  @import "tailwindcss";
+}
+
+@theme {
+  /* Font Family */
+  --font-family-sans: "Pretendard", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --font-family-pretendard: "Pretendard", sans-serif;
+
+  /* Custom Colors */
+  --color-couple-white: 255 255 255;
+  --color-couple-black: 0 0 0;
+
+  /* Gray Scale (warm tone from wireframe) */
+  --color-couple-gray-000: 255 255 255;
+  --color-couple-gray-005: 245 245 244;
+  --color-couple-gray-007: 248 248 246;
+  --color-couple-gray-010: 241 240 238;
+  --color-couple-gray-020: 231 229 228;
+  --color-couple-gray-030: 214 211 209;
+  --color-couple-gray-040: 168 162 158;
+  --color-couple-gray-050: 168 162 158;
+  --color-couple-gray-060: 120 113 108;
+  --color-couple-gray-070: 87 83 78;
+  --color-couple-gray-080: 68 64 60;
+  --color-couple-gray-090: 41 37 36;
+  --color-couple-gray-100: 28 25 23;
+
+  /* Accent Scale — controlled by CSS custom properties (see @layer base) */
+  --color-couple-blue-010: var(--accent-010);
+  --color-couple-blue-020: var(--accent-020);
+  --color-couple-blue-030: var(--accent-030);
+  --color-couple-blue-040: var(--accent-040);
+  --color-couple-blue-050-a: var(--accent-050);
+  --color-couple-blue-060: var(--accent-060);
+  --color-couple-blue-070: var(--accent-070);
+  --color-couple-blue-080: var(--accent-080);
+  --color-couple-blue-090: var(--accent-090);
+
+  /* Status */
+  --color-couple-status-red: 255 59 48;
+  --color-couple-yellow: 252 211 77;
+
+  /* Responsive Breakpoints */
+  --breakpoint-xs: 475px;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    border-color: var(--app-line-soft, rgb(var(--color-couple-gray-010)));
+  }
+
+  input, textarea, select {
+    background: var(--app-card);
+    border-color: var(--app-line);
+    color: inherit;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: rgb(var(--accent-070));
+    outline: none;
+  }
+
+  html,
+  body {
+    font-family: var(--font-family-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+  }
+
+  #root {
+    min-height: 100vh;
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+    background: rgb(var(--color-couple-gray-005));
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.06);
+  }
+
+  @media (min-width: 431px) {
+    body {
+      background: #e8e6e1;
+    }
+  }
+
+  /* ── Light / Coral (default) ── */
+  :root,
+  [data-palette="coral"] {
+    --accent-010: 253 230 224;
+    --accent-020: 254 215 208;
+    --accent-030: 253 195 186;
+    --accent-040: 252 170 158;
+    --accent-050: 251 150 135;
+    --accent-060: 250 135 115;
+    --accent-070: 249 120 99;
+    --accent-080: 180 70 55;
+    --accent-090: 120 45 35;
+  }
+
+  /* ── Light / Sage ── */
+  [data-palette="sage"] {
+    --accent-010: 238 243 233;
+    --accent-020: 225 235 218;
+    --accent-030: 205 220 198;
+    --accent-040: 180 200 175;
+    --accent-050: 155 180 150;
+    --accent-060: 130 160 125;
+    --accent-070: 107 140 102;
+    --accent-080: 80 105 75;
+    --accent-090: 55 75 50;
+  }
+
+  /* ── Light / Blue ── */
+  [data-palette="blue"] {
+    --accent-010: 224 235 253;
+    --accent-020: 200 220 250;
+    --accent-030: 170 200 245;
+    --accent-040: 140 180 238;
+    --accent-050: 110 160 232;
+    --accent-060: 90 145 228;
+    --accent-070: 74 125 224;
+    --accent-080: 55 95 170;
+    --accent-090: 35 65 120;
+  }
+
+  /* ── Light / Purple ── */
+  [data-palette="purple"] {
+    --accent-010: 243 232 255;
+    --accent-020: 233 215 252;
+    --accent-030: 220 195 250;
+    --accent-040: 208 170 252;
+    --accent-050: 200 150 252;
+    --accent-060: 198 140 252;
+    --accent-070: 192 132 252;
+    --accent-080: 145 100 190;
+    --accent-090: 100 70 135;
+  }
+
+  /* ── Light / Yellow ── */
+  [data-palette="yellow"] {
+    --accent-010: 255 248 225;
+    --accent-020: 254 240 200;
+    --accent-030: 253 230 170;
+    --accent-040: 252 218 140;
+    --accent-050: 252 205 110;
+    --accent-060: 251 195 50;
+    --accent-070: 251 191 36;
+    --accent-080: 200 150 20;
+    --accent-090: 140 100 10;
+  }
+
+  /* ── Light / Black ── */
+  [data-palette="black"] {
+    --accent-010: 240 240 240;
+    --accent-020: 220 220 220;
+    --accent-030: 190 190 190;
+    --accent-040: 150 150 150;
+    --accent-050: 120 120 120;
+    --accent-060: 80 80 80;
+    --accent-070: 40 40 40;
+    --accent-080: 20 20 20;
+    --accent-090: 10 10 10;
+  }
+
+  /* ── Design Presets (clean / sketch) ── */
+  :root,
+  [data-font="clean"] {
+    --app-font: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --app-radius: 14px;
+    --app-radius-lg: 20px;
+    --app-radius-pill: 9999px;
+    --app-stroke: 1px;
+    --app-shadow: 0 1px 2px rgba(28, 25, 23, 0.06), 0 4px 12px rgba(28, 25, 23, 0.04);
+    --app-bg: rgb(var(--color-couple-gray-005));
+    --app-card: rgb(var(--color-couple-gray-000));
+    --app-line: rgb(var(--color-couple-gray-030));
+    --app-line-soft: rgb(var(--color-couple-gray-020));
+    --app-ink: rgb(var(--color-couple-gray-100));
+    --app-ink-2: rgb(var(--color-couple-gray-060));
+    --app-ink-3: rgb(var(--color-couple-gray-050));
+    --app-ink-on-accent: #ffffff;
+    --app-font-size-base: 15px;
+    --app-letter-spacing: -0.1px;
+    --app-btn-ghost-border: solid;
+  }
+
+  [data-font="sketch"] {
+    --app-font: "Gaegu", "Patrick Hand", "Pretendard", cursive, sans-serif;
+    --app-radius: 6px;
+    --app-radius-lg: 10px;
+    --app-radius-pill: 9999px;
+    --app-stroke: 1.6px;
+    --app-shadow: 3px 3px 0 rgba(42, 36, 29, 0.85);
+    --app-bg: #fbf8f1;
+    --app-card: #fffdf6;
+    --app-line: #2a241d;
+    --app-line-soft: rgba(42, 36, 29, 0.25);
+    --app-ink: #2a241d;
+    --app-ink-2: #6b5e4e;
+    --app-ink-3: #a89b85;
+    --app-ink-on-accent: #fffdf6;
+    --app-font-size-base: 17px;
+    --app-letter-spacing: 0.2px;
+    --app-btn-ghost-border: dashed;
+  }
+
+  /* ── Pocket preset (share 시안 C — Memory Pocket) ── */
+  [data-font="pocket"] {
+    --app-font: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --app-radius: 18px;
+    --app-radius-lg: 26px;
+    --app-radius-pill: 9999px;
+    --app-stroke: 1.5px;
+    --app-shadow: 0 3px 0 rgba(43, 27, 62, 0.18);
+    --app-bg: #fff5e8;
+    --app-card: #ffffff;
+    --app-line: #2b1b3e;
+    --app-line-soft: rgba(43, 27, 62, 0.22);
+    --app-ink: #2b1b3e;
+    --app-ink-2: #6b5e81;
+    --app-ink-3: #a99fb6;
+    --app-ink-on-accent: #ffffff;
+    --app-font-size-base: 15px;
+    --app-letter-spacing: -0.2px;
+    --app-btn-ghost-border: solid;
+  }
+
+  /* Memory Pocket 캔디 컬러 — 장식용 (팔레트와 무관, 항상 사용 가능) */
+  :root {
+    --c-peach: #ffb89b;
+    --c-mint: #8fd7b8;
+    --c-sky: #9fc9f2;
+    --c-butter: #f7d77e;
+    --c-lilac: #c6a8e5;
+    --c-pink: #ff9bc1;
+    --c-paper-2: #ffeedc;
+  }
+
+  [data-mode="dark"] {
+    --c-peach: #c98a6f;
+    --c-mint: #5f9e80;
+    --c-sky: #6b94c2;
+    --c-butter: #c4a851;
+    --c-lilac: #9276b0;
+    --c-pink: #c46e92;
+    --c-paper-2: #2a2136;
+  }
+
+  html, body {
+    font-family: var(--app-font);
+    font-size: var(--app-font-size-base);
+    letter-spacing: var(--app-letter-spacing);
+  }
+
+  /* ── Dark mode base ── */
+  [data-mode="dark"] {
+    --color-couple-gray-000: 15 15 16;
+    --color-couple-gray-005: 15 15 16;
+    --color-couple-gray-007: 20 20 22;
+    --color-couple-gray-010: 26 26 28;
+    --color-couple-gray-020: 39 39 46;
+    --color-couple-gray-030: 63 63 70;
+    --color-couple-gray-040: 113 113 122;
+    --color-couple-gray-050: 113 113 122;
+    --color-couple-gray-060: 161 161 170;
+    --color-couple-gray-070: 212 212 216;
+    --color-couple-gray-080: 228 228 231;
+    --color-couple-gray-090: 244 244 245;
+    --color-couple-gray-100: 250 250 250;
+    color-scheme: dark;
+  }
+
+  /* ── Dark / Coral ── */
+  [data-mode="dark"][data-palette="coral"],
+  [data-mode="dark"]:not([data-palette]) {
+    --accent-010: 255 138 110 / 0.18;
+    --accent-020: 255 138 110 / 0.25;
+    --accent-030: 255 138 110 / 0.3;
+    --accent-040: 255 138 110 / 0.4;
+    --accent-050: 255 138 110 / 0.5;
+    --accent-060: 255 150 120;
+    --accent-070: 255 138 110;
+    --accent-080: 220 100 80;
+    --accent-090: 180 75 55;
+  }
+
+  /* ── Dark / Sage ── */
+  [data-mode="dark"][data-palette="sage"] {
+    --accent-010: 158 193 153 / 0.18;
+    --accent-020: 158 193 153 / 0.25;
+    --accent-030: 158 193 153 / 0.3;
+    --accent-040: 158 193 153 / 0.4;
+    --accent-050: 158 193 153 / 0.5;
+    --accent-060: 170 205 165;
+    --accent-070: 158 193 153;
+    --accent-080: 120 155 115;
+    --accent-090: 85 115 80;
+  }
+}
+
+@utility glass {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--app-radius);
+  background: var(--app-card);
+  border: var(--app-stroke) solid var(--app-line-soft);
+  box-shadow: var(--app-shadow);
+}
+
+@utility glass-pill {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--app-radius-pill);
+  background: var(--app-card);
+  border: var(--app-stroke) solid var(--app-line-soft);
+  box-shadow: var(--app-shadow);
+}
+
+@utility glass-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--app-radius-lg);
+  background: var(--app-card);
+  border: var(--app-stroke) solid var(--app-line-soft);
+  box-shadow: var(--app-shadow);
+}
+
+@utility glass-bar {
+  position: relative;
+  overflow: hidden;
+  background: var(--app-card);
+  border-top: var(--app-stroke) solid var(--app-line-soft);
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* ── Dark mode glass overrides ── */
+[data-mode="dark"] .glass,
+[data-mode="dark"] .glass-pill,
+[data-mode="dark"] .glass-card {
+  background: rgba(26, 26, 28, 0.9);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+[data-mode="dark"] .glass-bar {
+  background: rgba(26, 26, 28, 0.9);
+  border-top-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Sketch mode overrides ── */
+[data-font="sketch"] .glass,
+[data-font="sketch"] .glass-pill,
+[data-font="sketch"] .glass-card {
+  background: #fffdf6;
+  border-color: #2a241d;
+  border-width: 1.6px;
+  box-shadow: 3px 3px 0 rgba(42, 36, 29, 0.85);
+}
+
+[data-font="sketch"] .glass-bar {
+  background: #fffdf6;
+  border-top-color: rgba(42, 36, 29, 0.25);
+}
+
+/* Sketch mode: ensure text colors are readable */
+[data-font="sketch"] .text-couple-gray-060 {
+  color: #5b5247;
+}
+
+[data-font="sketch"] .text-couple-gray-050 {
+  color: #9a9082;
+}
+
+[data-font="sketch"] .bg-couple-gray-090 {
+  background-color: #2a241d;
+}
+
+[data-font="sketch"] .text-couple-gray-000 {
+  color: #fffdf6;
+}
+
+[data-font="sketch"] #root {
+  background: #fbf8f1;
+}
+
+/* ── Sketch + Dark mode ── */
+[data-font="sketch"][data-mode="dark"] .glass,
+[data-font="sketch"][data-mode="dark"] .glass-pill,
+[data-font="sketch"][data-mode="dark"] .glass-card {
+  background: #26201a;
+  border-color: rgba(244, 236, 217, 0.22);
+  box-shadow: 3px 3px 0 rgba(244, 236, 217, 0.15);
+}
+
+[data-font="sketch"][data-mode="dark"] .glass-bar {
+  background: #26201a;
+  border-top-color: rgba(244, 236, 217, 0.12);
+}
+
+[data-font="sketch"][data-mode="dark"] #root {
+  background: #1a1612;
+}
+
+[data-font="sketch"][data-mode="dark"] {
+  --app-bg: #1a1612;
+  --app-card: #26201a;
+  --app-line: rgba(244, 236, 217, 0.22);
+  --app-line-soft: rgba(244, 236, 217, 0.12);
+  --app-ink: #f4ecd9;
+  --app-ink-2: #b3a78f;
+  --app-ink-3: #837866;
+  --app-ink-on-accent: #1a1612;
+}
+
+/* ── Pocket preset overrides ── */
+[data-font="pocket"] #root {
+  background: #fff5e8;
+}
+
+[data-font="pocket"] .glass,
+[data-font="pocket"] .glass-pill,
+[data-font="pocket"] .glass-card {
+  background: var(--app-card);
+  border-color: var(--app-line);
+  border-width: 1.5px;
+  box-shadow: 0 3px 0 rgba(43, 27, 62, 0.18);
+}
+
+[data-font="pocket"] .glass-bar {
+  background: var(--app-card);
+  border-top-color: var(--app-line);
+  border-top-width: 1.5px;
+}
+
+[data-font="pocket"][data-mode="dark"] {
+  --app-bg: #1c1525;
+  --app-card: #2a2136;
+  --app-line: rgba(240, 230, 250, 0.4);
+  --app-line-soft: rgba(240, 230, 250, 0.16);
+  --app-ink: #f0e6fa;
+  --app-ink-2: #b3a7c4;
+  --app-ink-3: #837693;
+  --app-ink-on-accent: #1c1525;
+}
+
+[data-font="pocket"][data-mode="dark"] #root {
+  background: #1c1525;
+}
+
+[data-font="pocket"][data-mode="dark"] .glass,
+[data-font="pocket"][data-mode="dark"] .glass-pill,
+[data-font="pocket"][data-mode="dark"] .glass-card {
+  background: var(--app-card);
+  border-color: var(--app-line);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45);
+}
+
+[data-font="pocket"][data-mode="dark"] .glass-bar {
+  background: var(--app-card);
+  border-top-color: var(--app-line);
+}
+
+[data-mode="dark"] {
+  --app-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+[data-mode="light"] ::-webkit-scrollbar-track,
+:root:not([data-mode]) ::-webkit-scrollbar-track {
+  background-color: rgb(229, 231, 235);
+}
+
+[data-mode="light"] ::-webkit-scrollbar-thumb,
+:root:not([data-mode]) ::-webkit-scrollbar-thumb {
+  background-color: rgb(156, 163, 175);
+  border-radius: 9999px;
+}
+
+[data-mode="dark"] ::-webkit-scrollbar-track {
+  background-color: rgb(31, 41, 55);
+}
+
+[data-mode="dark"] ::-webkit-scrollbar-thumb {
+  background-color: #696969;
+  border-radius: 9999px;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

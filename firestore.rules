@@ -1,0 +1,145 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 커플 구성원 여부 — couples/{id}.users 배열에 본인 uid 포함 확인
+    function isCoupleMember(coupleId) {
+      return request.auth != null
+        && coupleId is string
+        && request.auth.uid in get(/databases/$(database)/documents/couples/$(coupleId)).data.users;
+    }
+
+    // Users — only owner can read/write
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Couples — 본인이 멤버로 포함된 2인 문서만 생성 가능
+    match /couples/{coupleId} {
+      allow read: if request.auth != null && request.auth.uid in resource.data.users;
+      allow create: if request.auth != null
+        && request.auth.uid in request.resource.data.users
+        && request.resource.data.users.size() == 2;
+      allow update: if request.auth != null && request.auth.uid in resource.data.users;
+    }
+
+    // Invite codes — 페어링 플로우 (couple.ts):
+    //   생성자: 본인 코드 생성/조회/삭제
+    //   참여자: 코드 get 후 소비 전이(used:false→true + coupleId 기록)만 허용
+    match /inviteCodes/{code} {
+      allow get: if request.auth != null;
+      allow list: if request.auth != null
+        && request.auth.uid == resource.data.creatorId;
+      allow create: if request.auth != null
+        && request.resource.data.creatorId == request.auth.uid
+        && request.resource.data.used == false;
+      allow update: if request.auth != null
+        && resource.data.used == false
+        && request.resource.data.used == true
+        && request.auth.uid != resource.data.creatorId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['used', 'coupleId'])
+        && request.auth.uid in get(/databases/$(database)/documents/couples/$(request.resource.data.coupleId)).data.users;
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.creatorId;
+    }
+
+    // Saved places — 커플 구성원만
+    match /savedPlaces/{placeId} {
+      allow read, delete: if isCoupleMember(resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId);
+      allow update: if isCoupleMember(resource.data.coupleId)
+        && request.resource.data.coupleId == resource.data.coupleId;
+    }
+
+    // Memories — 커플 구성원만 읽기, 작성자만 수정/삭제
+    match /memories/{memoryId} {
+      allow read: if isCoupleMember(resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId);
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.authorId;
+
+      // Comments sub-collection — 부모 추억의 커플 구성원만
+      match /comments/{commentId} {
+        allow read, create: if isCoupleMember(
+          get(/databases/$(database)/documents/memories/$(memoryId)).data.coupleId
+        );
+      }
+
+      // Reactions sub-collection — 부모 추억의 커플 구성원만, 본인 문서만 쓰기
+      match /reactions/{userId} {
+        allow read: if isCoupleMember(
+          get(/databases/$(database)/documents/memories/$(memoryId)).data.coupleId
+        );
+        allow write: if request.auth != null && request.auth.uid == userId
+          && isCoupleMember(
+            get(/databases/$(database)/documents/memories/$(memoryId)).data.coupleId
+          );
+      }
+    }
+
+    // Notifications — owner only
+    match /notifications/{notifId} {
+      allow read, update: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null;
+    }
+
+    // Anniversaries — 커플 구성원만
+    match /anniversaries/{annId} {
+      allow read, update, delete: if isCoupleMember(resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId);
+    }
+
+    // Letters — 커플 구성원만
+    match /letters/{letterId} {
+      allow read, update, delete: if isCoupleMember(resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId);
+    }
+
+    // Chat — 경로의 coupleId 구성원만
+    match /chat/{coupleId}/messages/{messageId} {
+      allow read, write: if isCoupleMember(coupleId);
+    }
+
+    // Wishlists — 커플 구성원만
+    match /wishlists/{itemId} {
+      allow read, update, delete: if isCoupleMember(resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId);
+    }
+
+    // ── 데이트 비용 — 커플 구성원만 ──
+    match /expenses/{expenseId} {
+      allow read, delete: if isCoupleMember(resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId);
+    }
+
+    // ── 오늘의 질문 답변 — 커플 구성원만, 본인 답변만 작성 ──
+    match /dailyAnswers/{answerId} {
+      allow read: if isCoupleMember(resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId)
+        && request.resource.data.authorId == request.auth.uid;
+    }
+
+    // ── 챌린지 완료 — 커플 구성원만 ──
+    match /challengeCompletions/{id} {
+      allow read: if isCoupleMember(resource.data.coupleId);
+      allow create, update: if isCoupleMember(request.resource.data.coupleId);
+    }
+
+    // ── 스티커 — 커플 구성원만 ──
+    match /stickers/{stickerId} {
+      allow read, delete: if isCoupleMember(resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId);
+    }
+
+    // ── 음성 메모 — 커플 구성원만 ──
+    match /voiceMemos/{memoId} {
+      allow read, delete: if isCoupleMember(resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId);
+    }
+
+    // ── 여행기 — 커플 구성원만 ──
+    match /travelogues/{travelogueId} {
+      allow read, delete: if isCoupleMember(resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId);
+    }
+  }
+}

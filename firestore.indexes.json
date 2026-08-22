@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "savedPlaces",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "coupleId", "order": "ASCENDING" },
+        { "fieldPath": "savedAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

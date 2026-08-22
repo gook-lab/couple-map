@@ -1,0 +1,17 @@
+{
+  "name": "우리의 여행",
+  "short_name": "우리여행",
+  "description": "커플 여행 지도 앱 — 맛집, 카페, 데이트 장소를 기록해요",
+  "start_url": "/today",
+  "display": "standalone",
+  "background_color": "#f5f5f4",
+  "theme_color": "#f97863",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

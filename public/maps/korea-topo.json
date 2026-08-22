@@ -1,0 +1,11 @@
+(node:96263) ExperimentalWarning: CommonJS module /opt/homebrew/lib/node_modules/npm/node_modules/debug/src/node.js is loading ES Module /opt/homebrew/lib/node_modules/npm/node_modules/supports-color/index.js using require().
+Support for loading ES Module in require() is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/geo2topo - Not found
+npm error 404
+npm error 404  'geo2topo@*' is not in this registry.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: /Users/kyb-ontact/.npm/_logs/2026-05-05T22_41_12_142Z-debug-0.log
