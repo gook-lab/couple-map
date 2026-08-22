@@ -13,6 +13,10 @@
 
 ---
 
+## 스크린샷
+
+<img src="docs/screenshots/01-welcome.png" width="280">
+
 ## 실행
 
 ```bash
