@@ -1,0 +1,8 @@
+{
+  "files": {
+    "src/contexts/ThemeContext.tsx": 1,
+    "src/pages/Login.tsx": 1,
+    "src/pages/Onboarding.tsx": 1
+  },
+  "total": 3
+}
