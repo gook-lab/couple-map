@@ -1,6 +1,6 @@
 # Couple App
 
-**한국어** · [English](README.en.md)
+**한국어** | [English](README.en.md)
 
 > **About (EN)** — A mobile-first PWA for couples to record and share where
 > they've been together: pin restaurants, cafés and date spots on a Kakao map,
