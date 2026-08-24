@@ -1,5 +1,7 @@
 # Couple App
 
+**한국어** | [English](README.en.md)
+
 > **About (EN)** — A mobile-first PWA for couples to record and share where
 > they've been together: pin restaurants, cafés and date spots on a Kakao map,
 > fill in a Korea/world region map as you travel, keep a shared timeline,
@@ -9,7 +11,7 @@
 커플이 함께 다닌 곳을 기록하고 공유하는 모바일 PWA.
 
 맛집·카페·데이트 장소를 카카오 지도에 핀으로 남기고, 다녀온 지역이 지도에 채워지고,
-타임라인·기념일·편지·채팅·타임캡슐까지 한 앱에 모은다.
+타임라인·기념일·편지·채팅·타임캡슐까지 한 앱에 모았습니다.
 
 ---
 
@@ -101,7 +103,7 @@ firestore.indexes.json
 ## 디자인 시스템
 
 상세는 **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**와 `.claude/rules/design-system.md`.
-요점은 **"직접 스타일을 쓰지 않는다"**이다.
+요점은 **"직접 스타일을 쓰지 않는다"**입니다.
 
 - **테마**: 팔레트 6종(coral 기본 · sage · blue · purple · yellow · black) ×
   모드 3종(light / dark / system) × 폰트 2종(Pretendard / 개구쟁이 손글씨)
@@ -122,7 +124,7 @@ firestore.indexes.json
 | `border-couple-gray-*` 구분선 | `var(--app-line-soft)` |
 | 애드혹 리스트/빈 상태 | `GlassList` + `ListRow`, `EmptyState` |
 
-모든 버튼은 `rounded-full`, 모든 카드는 `glass-card`다.
+모든 버튼은 `rounded-full`이고 모든 카드는 `glass-card` 유틸을 씁니다.
 
 ---
 
@@ -143,6 +145,6 @@ firestore.indexes.json
 ## 라이선스
 
 **Source-available — 오픈소스가 아닙니다.** 코드를 읽을 수 있게 공개했을 뿐,
-사용 권한을 준 것은 아닙니다. 다른 프로젝트에 가져다 쓰거나 재배포·상업적 이용을
+사용 권한을 드린 것은 아닙니다. 다른 프로젝트에 가져다 쓰거나 재배포·상업적 이용을
 하려면 사전 서면 허락이 필요합니다. 전문은 [LICENSE](LICENSE), 한국어 안내는 [LICENSE.ko.md](LICENSE.ko.md) 참조.
 
