@@ -146,10 +146,11 @@ const Today: React.FC = () => {
                 <Meta className="mt-1 block">500일까지 {500 - dDay}일 남았어요 🎉</Meta>
                 <div className="h-2 rounded-full mt-3 overflow-hidden" style={progressTrack}>
                   <motion.div
-                    className="h-full rounded-full"
+                    // width 대신 transform (레이아웃 재계산 회피, 시각 동일)
+                    className="h-full w-full rounded-full"
                     style={{ background: "var(--app-ink)" }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(dDay / 500) * 100}%` }}
+                    initial={{ x: "-100%" }}
+                    animate={{ x: `-${100 - (dDay / 500) * 100}%` }}
                     transition={{ duration: 1, delay: 0.3 }}
                   />
                 </div>
@@ -315,10 +316,11 @@ const Today: React.FC = () => {
               <Meta className="mt-1 block">500일까지 {500 - dDay}일 남았어요 🎉</Meta>
               <div className="h-2 rounded-full mt-3 overflow-hidden" style={progressTrack}>
                 <motion.div
-                  className="h-full rounded-full"
+                  // width 대신 transform (레이아웃 재계산 회피, 시각 동일)
+                  className="h-full w-full rounded-full"
                   style={{ background: "var(--app-ink)" }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(dDay / 500) * 100}%` }}
+                  initial={{ x: "-100%" }}
+                  animate={{ x: `-${100 - (dDay / 500) * 100}%` }}
                   transition={{ duration: 1 }}
                 />
               </div>

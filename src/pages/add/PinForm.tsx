@@ -277,10 +277,11 @@ const PinForm: React.FC = () => {
               </div>
               <div className="h-1.5 rounded-full mt-4 overflow-hidden" style={{ background: "var(--app-line-soft)" }}>
                 <motion.div
-                  className="h-full rounded-full"
+                  // width 대신 transform (레이아웃 재계산 회피, 시각 동일)
+                  className="h-full w-full rounded-full"
                   style={{ background: "rgb(var(--accent-070))" }}
-                  initial={{ width: "10%" }}
-                  animate={{ width: "90%" }}
+                  initial={{ x: "-90%" }}
+                  animate={{ x: "-10%" }}
                   transition={{ duration: 2, ease: "easeInOut" }}
                 />
               </div>

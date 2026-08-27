@@ -160,7 +160,8 @@ const LocationShare: React.FC = () => {
                 <Meta>남았어요 · 850m</Meta>
               </div>
               <div className="h-1 rounded-full mt-3 overflow-hidden" style={placeholderTile}>
-                <motion.div className="h-full rounded-full" style={{ background: "rgb(var(--accent-070))" }} initial={{ width: 0 }} animate={{ width: "64%" }} transition={{ duration: 1.5 }} />
+                {/* width 대신 transform (레이아웃 재계산 회피, 시각 동일) */}
+                <motion.div className="h-full w-full rounded-full" style={{ background: "rgb(var(--accent-070))" }} initial={{ x: "-100%" }} animate={{ x: "-36%" }} transition={{ duration: 1.5 }} />
               </div>
             </div>
 
