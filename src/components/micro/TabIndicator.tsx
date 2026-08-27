@@ -21,8 +21,11 @@ const TabIndicator: React.FC<TabIndicatorProps> = ({ tabs, activeId, onChange })
       {/* Sliding indicator */}
       <motion.div
         className="absolute top-1 bottom-1 rounded-full shadow-sm"
-        style={{ background: "rgb(var(--accent-070))", width: `${tabWidth}%` }}
-        animate={{ left: `${activeIndex * tabWidth}%` }}
+        // left 대신 transform — left 애니메이션은 매 프레임 레이아웃을 다시
+        // 계산한다. x 의 % 는 자기 자신(탭 한 칸) 너비 기준이라 인덱스를
+        // 그대로 곱하면 같은 위치가 된다.
+        style={{ background: "rgb(var(--accent-070))", width: `${tabWidth}%`, left: 0 }}
+        animate={{ x: `${activeIndex * 100}%` }}
         transition={{ type: "spring", stiffness: 300, damping: 25 }}
       />
 
