@@ -15,6 +15,16 @@ Restaurants, cafés, and date spots can be saved to a Kakao map, while visited r
 - **Share data safely**: couple-scoped permissions protect shared records and reactions, with Firestore rules tested separately.
 - **Use it on mobile**: navigation and fixed controls fit a 430px app frame, with clear offline and save-state feedback.
 
+## From problem to verification
+
+| Stage | Details |
+|---|---|
+| Problem | When places, photos, and conversations live in separate features, memories are hard to revisit and the sharing boundary between two users can become unclear. |
+| Decision | Let one place record appear across maps, regions, timelines, and calendars, while applying couple-scoped access to all shared data. |
+| Implementation | Split Firebase services by domain and connect Kakao Maps and regional maps to the same record model. |
+| Verification | Use Vitest for UI and utility behavior, then verify Firestore rules and cross-user data isolation with the Firebase Emulator. |
+| Retrospective | For a shared service, defining who can read and change each record is as important as making the interface convenient. |
+
 ---
 
 ## Screenshots
