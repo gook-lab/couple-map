@@ -6,6 +6,8 @@
 
 맛집·카페·데이트 장소를 카카오 지도에 저장하고, 방문한 국내외 지역을 지도에서 확인할 수 있습니다. 두 사용자가 같은 기록을 공유하며 기념일·편지·대화·타임캡슐을 한곳에서 관리하도록 구성했습니다.
 
+<img src="docs/screenshots/cover.png" alt="couple-map 시작 화면" width="100%">
+
 ## 주요 경험
 
 - **장소 기록**: 장소 검색부터 지도 핀, 사진과 메모 저장까지 하나의 흐름으로 연결했습니다.
@@ -136,7 +138,7 @@ firestore.indexes.json
 | `.claude/rules/design-system.md` | 토큰 전체 표 |
 | [TODOS.md](TODOS.md) | 남은 작업 |
 
-`docs/PROJECT_OVERVIEW.md`는 초기 기획 기록으로 보관하고 있습니다. 현재 구현과 기술 구성은 이 README와 `docs/ARCHITECTURE.md`를 기준으로 합니다.
+[`docs/archive/PROJECT_OVERVIEW.md`](docs/archive/PROJECT_OVERVIEW.md)는 초기 기획 기록으로 보관하고 있습니다. 현재 구현과 기술 구성은 이 README와 `docs/ARCHITECTURE.md`를 기준으로 합니다.
 
 ---
 
