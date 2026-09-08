@@ -1,17 +1,17 @@
-# Couple App
+# couple-map
 
 **한국어** | [English](README.en.md)
 
-> **About (EN)** — A mobile-first PWA for couples to record and share where
-> they've been together: pin restaurants, cafés and date spots on a Kakao map,
-> fill in a Korea/world region map as you travel, keep a shared timeline,
-> anniversaries, letters, chat and a time capsule. React 19 + Vite + Firebase,
-> with a six-palette themeable glass design system.
+함께 다닌 장소와 추억을 지도와 타임라인에 기록하는 모바일 PWA입니다.
 
-커플이 함께 다닌 곳을 기록하고 공유하는 모바일 PWA.
+맛집·카페·데이트 장소를 카카오 지도에 저장하고, 방문한 국내외 지역을 지도에서 확인할 수 있습니다. 두 사용자가 같은 기록을 공유하며 기념일·편지·대화·타임캡슐을 한곳에서 관리하도록 구성했습니다.
 
-맛집·카페·데이트 장소를 카카오 지도에 핀으로 남기고, 다녀온 지역이 지도에 채워지고,
-타임라인·기념일·편지·채팅·타임캡슐까지 한 앱에 모았습니다.
+## 주요 경험
+
+- **장소 기록**: 장소 검색부터 지도 핀, 사진과 메모 저장까지 하나의 흐름으로 연결했습니다.
+- **추억 탐색**: 지도·지역·타임라인·캘린더에서 같은 기록을 서로 다른 기준으로 찾아볼 수 있습니다.
+- **함께 쓰는 데이터**: 커플 단위 권한으로 기록과 반응을 공유하고 Firestore 보안 규칙을 별도로 검증합니다.
+- **모바일 사용성**: 430px 앱 영역을 기준으로 내비게이션과 고정 UI를 배치하고 오프라인·저장 상태를 안내합니다.
 
 ---
 
@@ -102,8 +102,7 @@ firestore.indexes.json
 
 ## 디자인 시스템
 
-상세는 **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**와 `.claude/rules/design-system.md`.
-요점은 **"직접 스타일을 쓰지 않는다"**입니다.
+상세 규칙은 **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**와 `.claude/rules/design-system.md`에서 확인할 수 있습니다. 화면마다 다른 스타일을 추가하기보다 공통 토큰과 UI 컴포넌트를 조합합니다.
 
 - **테마**: 팔레트 6종(coral 기본 · sage · blue · purple · yellow · black) ×
   모드 3종(light / dark / system) × 폰트 2종(Pretendard / 개구쟁이 손글씨)
@@ -114,7 +113,7 @@ firestore.indexes.json
 - **레이아웃**: 앱 최대 폭 **430px 중앙 정렬**(모바일 PWA).
   모든 `fixed` 요소는 `left-1/2 -translate-x-1/2 w-full max-w-[430px]`
 
-### 금지 목록
+### 사용 기준
 
 | 하지 말 것 | 대신 |
 |---|---|
@@ -137,8 +136,7 @@ firestore.indexes.json
 | `.claude/rules/design-system.md` | 토큰 전체 표 |
 | [TODOS.md](TODOS.md) | 남은 작업 |
 
-> ⚠️ `docs/PROJECT_OVERVIEW.md`는 **초기 기획 시점 문서**로, 스택 설명(Next.js 14)이
-> 현재 구현(React 19 + Vite)과 다르다. 현행 기준은 이 README와 `docs/ARCHITECTURE.md`다.
+`docs/PROJECT_OVERVIEW.md`는 초기 기획 기록으로 보관하고 있습니다. 현재 구현과 기술 구성은 이 README와 `docs/ARCHITECTURE.md`를 기준으로 합니다.
 
 ---
 
@@ -147,4 +145,3 @@ firestore.indexes.json
 **Source-available — 오픈소스가 아닙니다.** 코드를 읽을 수 있게 공개했을 뿐,
 사용 권한을 드린 것은 아닙니다. 다른 프로젝트에 가져다 쓰거나 재배포·상업적 이용을
 하려면 사전 서면 허락이 필요합니다. 전문은 [LICENSE](LICENSE), 한국어 안내는 [LICENSE.ko.md](LICENSE.ko.md) 참조.
-
