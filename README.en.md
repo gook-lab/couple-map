@@ -1,8 +1,19 @@
-# Couple App
+# couple-map
 
 [한국어](README.md) | **English**
 
-A mobile-first PWA for couples to record and share where they've been together. Pin restaurants, cafés and date spots on a Kakao map, fill in a Korea/world region map as you travel, keep a shared timeline, anniversaries, letters, chat and a time capsule all in one app.
+A mobile PWA for recording shared places and memories on maps and timelines.
+
+Restaurants, cafés, and date spots can be saved to a Kakao map, while visited regions are filled across Korea and world maps. Two people share the same records and manage anniversaries, letters, conversations, and time capsules in one place.
+
+<img src="docs/screenshots/cover.png" alt="couple-map welcome screen" width="100%">
+
+## Core experience
+
+- **Record a place**: move from place search to a map pin, photos, and notes in one flow.
+- **Browse memories**: find the same record by map, region, timeline, or calendar.
+- **Share data safely**: couple-scoped permissions protect shared records and reactions, with Firestore rules tested separately.
+- **Use it on mobile**: navigation and fixed controls fit a 430px app frame, with clear offline and save-state feedback.
 
 ---
 
@@ -128,7 +139,7 @@ All buttons are `rounded-full` and all cards use the `glass-card` utility.
 | `.claude/rules/design-system.md` | Full token table |
 | [TODOS.md](TODOS.md) | Open tasks |
 
-> ⚠️ `docs/PROJECT_OVERVIEW.md` is an **early planning document** with an outdated tech stack (Next.js 14). The current reference is this README and `docs/ARCHITECTURE.md`.
+[`docs/archive/PROJECT_OVERVIEW.md`](docs/archive/PROJECT_OVERVIEW.md) is retained as an early planning record. This README and `docs/ARCHITECTURE.md` describe the current React 19 and Vite implementation.
 
 ---
 
