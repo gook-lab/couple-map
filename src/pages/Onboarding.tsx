@@ -53,7 +53,7 @@ const Onboarding: React.FC = () => {
         setStep("region");
       }
     });
-  }, [user]);
+  }, [setCoupleId, user]);
 
   const totalSteps = 6;
   const stepNumber = (() => {

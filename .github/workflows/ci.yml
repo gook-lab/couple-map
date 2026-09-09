@@ -35,5 +35,8 @@ jobs:
       - name: 유닛 테스트
         run: npm test
 
+      - name: Firestore 보안 규칙 테스트
+        run: npm run test:rules
+
       - name: 빌드
         run: npm run build

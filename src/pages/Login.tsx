@@ -28,7 +28,7 @@ const Login: React.FC = () => {
     if (isAuthenticated) {
       navigate("/onboarding", { replace: true });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     if (authLoading) return;
