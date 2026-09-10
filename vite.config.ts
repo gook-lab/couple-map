@@ -1,12 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { viteCommonjs } from "@originjs/vite-plugin-commonjs";
 import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), viteCommonjs()],
+  plugins: [react(), tailwindcss()],
   build: {
     rollupOptions: {
       output: {
