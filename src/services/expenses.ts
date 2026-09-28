@@ -8,11 +8,12 @@ import { db } from "./firebase";
 export interface Expense {
   id: string;
   coupleId: string;
-  title: string;
-  amount: number;
-  payerId: string;
-  emoji: string;
-  createdAt: Date;
+  date: Date; // 지출 날짜 (사용자가 선택)
+  amount: number; // 양의 정수, 원 단위
+  paidBy: string; // 지출한 사람의 uid
+  memo?: string; // 선택 사항
+  visitId?: string; // 장소 방문 참조 (선택)
+  createdAt: Date; // 작성 시간
 }
 
 export async function addExpense(

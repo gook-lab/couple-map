@@ -1,80 +1,107 @@
-import React, { useState, useEffect } from "react";
-import { Plus } from "lucide-react";
-import { Tiny } from "@/components/ui/typography";
-import StatCard from "@/components/ui/stat-card";
+import React, { useState, useEffect, useMemo } from "react";
+import { Plus, Trash2 } from "lucide-react";
+import { format, isSameMonth } from "date-fns";
+import { ko } from "date-fns/locale";
+import { Body, Meta, Tiny } from "@/components/ui/typography";
 import GlassList from "@/components/ui/glass-list";
-import ListRow from "@/components/ui/list-row";
 import AppInput from "@/components/ui/app-input";
 import AppButton from "@/components/ui/app-button";
+import EmptyState from "@/components/ui/empty-state";
 import PageContainer from "@/components/layout/PageContainer";
 import PageHeader from "@/components/layout/PageHeader";
 import { useAuthStore } from "@/store/use-auth-store";
-import { subscribeExpenses, addExpense, type Expense } from "@/services/expenses";
+import { subscribeExpenses, addExpense, deleteExpense, type Expense } from "@/services/expenses";
+import { calculateSettlement } from "@/lib/expense-split";
 import toast from "@/lib/toast";
-
-interface DemoExpense { id: string; title: string; amount: number; payerId: string; emoji: string; }
-
-const SAMPLE: DemoExpense[] = [
-  { id: "1", title: "카페 도토리", amount: 12000, payerId: "me", emoji: "☕" },
-  { id: "2", title: "점심 파스타", amount: 32000, payerId: "partner", emoji: "🍝" },
-  { id: "3", title: "영화 관람", amount: 28000, payerId: "me", emoji: "🎬" },
-  { id: "4", title: "택시비", amount: 8000, payerId: "partner", emoji: "🚕" },
-];
 
 const DateExpenses: React.FC = () => {
   const user = useAuthStore((s) => s.state.user);
   const coupleId = useAuthStore((s) => s.state.coupleId);
 
-  const [expenses, setExpenses] = useState<(Expense | DemoExpense)[]>(SAMPLE);
-  const [live, setLive] = useState(false);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [showAdd, setShowAdd] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
+  const [newMemo, setNewMemo] = useState("");
   const [newAmount, setNewAmount] = useState("");
+  const [newDate, setNewDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     if (!coupleId) return;
     try {
       return subscribeExpenses(coupleId, (items) => {
         setExpenses(items);
-        setLive(true);
       });
-    } catch { /* keep samples */ }
+    } catch { /* keep empty */ }
   }, [coupleId]);
 
-  // 본인 결제 여부 — 연동 시 payerId 비교, 데모 시 "me" 문자열 비교
-  const isMine = (e: Expense | DemoExpense) => (live ? e.payerId === user?.uid : e.payerId === "me");
+  // 현재 달 지출만 필터링
+  const currentMonth = useMemo(() => {
+    const now = new Date();
+    return expenses.filter((e) => isSameMonth(e.date, now));
+  }, [expenses]);
 
-  const total = expenses.reduce((s, e) => s + e.amount, 0);
-  const myTotal = expenses.filter(isMine).reduce((s, e) => s + e.amount, 0);
-  const partnerTotal = total - myTotal;
-  const diff = myTotal - partnerTotal;
+  // 정산 계산 — 커플 두 uid를 expenses에서 추출
+  const settlement = useMemo(() => {
+    if (!user || currentMonth.length === 0) return null;
+
+    // 지출 배열에서 모든 고유한 paidBy uid 찾기
+    const payers = new Set(currentMonth.map((e) => e.paidBy));
+    const uids = Array.from(payers);
+
+    // 자신의 uid와 상대방의 uid 결정
+    const myUid = user.uid;
+    const partnerUid = uids.find((uid) => uid !== myUid);
+
+    if (!partnerUid) return null; // 상대가 한 번도 내지 않은 경우
+
+    return calculateSettlement(currentMonth, [myUid, partnerUid]);
+  }, [currentMonth, user]);
+
+  const total = currentMonth.reduce((s, e) => s + e.amount, 0);
 
   const handleAdd = async () => {
-    if (!newTitle || !newAmount) return;
+    if (!newMemo || !newAmount || !newDate) return;
     const amount = parseInt(newAmount, 10);
-    if (Number.isNaN(amount)) return;
+    if (Number.isNaN(amount) || amount <= 0) return;
 
     if (coupleId && user) {
       setSaving(true);
       try {
-        await addExpense({ coupleId, title: newTitle, amount, payerId: user.uid, emoji: "💰" });
+        await addExpense({
+          coupleId,
+          date: new Date(newDate),
+          amount,
+          paidBy: user.uid,
+          memo: newMemo,
+        });
+        toast.success({ message: "지출을 기록했어요" });
       } catch {
         toast.error({ message: "저장에 실패했어요" });
       }
       setSaving(false);
-    } else {
-      setExpenses([{ id: `e-${Date.now()}`, title: newTitle, amount, payerId: "me", emoji: "💰" }, ...expenses]);
     }
-    setNewTitle("");
+    setNewMemo("");
     setNewAmount("");
+    setNewDate(format(new Date(), "yyyy-MM-dd"));
     setShowAdd(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    setDeleting(id);
+    try {
+      await deleteExpense(id);
+      toast.success({ message: "지출을 삭제했어요" });
+    } catch {
+      toast.error({ message: "삭제에 실패했어요" });
+    }
+    setDeleting(null);
   };
 
   return (
     <PageContainer withBottomNav>
       <PageHeader
-        title="데이트 비용 💸"
+        title="데이트 비용"
         right={
           <button onClick={() => setShowAdd(!showAdd)} aria-label="추가" className="p-1">
             <Plus className="w-5 h-5" style={{ color: "var(--app-ink)" }} />
@@ -82,44 +109,122 @@ const DateExpenses: React.FC = () => {
         }
       />
 
-      <div className="px-5 pt-4">
-        <div className="grid grid-cols-3 gap-2">
-          <StatCard value={`${(total / 10000).toFixed(1)}만`} label="이번 달 총액" />
-          <StatCard value={`${Math.round((myTotal / total) * 100 || 0)}%`} label="나" />
-          <StatCard value={`${Math.round((partnerTotal / total) * 100 || 0)}%`} label="파트너" />
+      <div className="px-5 pt-4 space-y-4">
+        {/* 총액 헤더 */}
+        <div className="text-center">
+          <div
+            className="text-3xl font-bold"
+            style={{ color: "var(--app-ink)" }}
+          >
+            ₩{total.toLocaleString()}
+          </div>
+          <Meta className="mt-1">
+            {format(new Date(), "MMMM", { locale: ko })} 총액
+          </Meta>
         </div>
 
-        {diff !== 0 && (
+        {/* 정산 메시지 */}
+        {settlement && user ? (
           <div
-            className="mt-3 p-3 rounded-xl text-center text-[13px]"
-            style={{ background: "rgb(var(--accent-010))", border: "1.5px solid var(--app-line-soft)", color: "var(--app-ink)" }}
+            className="p-3 rounded-xl text-center text-[14px]"
+            style={{
+              background: "rgb(var(--accent-010))",
+              border: "1.5px solid var(--app-line-soft)",
+              color: "var(--app-ink)",
+            }}
           >
-            {diff > 0
-              ? <span>파트너가 <strong style={{ color: "rgb(var(--accent-070))" }}>{diff.toLocaleString()}원</strong> 더 내면 공평</span>
-              : <span>내가 <strong style={{ color: "rgb(var(--accent-070))" }}>{Math.abs(diff).toLocaleString()}원</strong> 더 내면 공평</span>}
+            {settlement.from === user.uid ? (
+              <Body>
+                내가{" "}
+                <strong style={{ color: "rgb(var(--accent-070))" }}>
+                  ₩{settlement.amount.toLocaleString()}
+                </strong>
+                {" "}보내면 반반이에요
+              </Body>
+            ) : (
+              <Body>
+                파트너가{" "}
+                <strong style={{ color: "rgb(var(--accent-070))" }}>
+                  ₩{settlement.amount.toLocaleString()}
+                </strong>
+                {" "}보내면 반반이에요
+              </Body>
+            )}
           </div>
-        )}
+        ) : null}
 
+        {/* 지출 추가 폼 */}
         {showAdd && (
-          <div className="mt-4 glass-card p-4 space-y-3">
-            <AppInput label="항목" value={newTitle} onChange={setNewTitle} placeholder="카페, 식사, 택시..." clearable />
-            <AppInput label="금액" type="number" value={newAmount} onChange={setNewAmount} placeholder="0" suffix={<Tiny>원</Tiny>} />
-            <AppButton onClick={handleAdd} size="md" loading={saving}>추가</AppButton>
+          <div className="glass-card p-4 space-y-3">
+            <AppInput
+              label="메모"
+              value={newMemo}
+              onChange={setNewMemo}
+              placeholder="카페, 식사, 택시..."
+              clearable
+            />
+            <AppInput
+              label="금액"
+              type="number"
+              value={newAmount}
+              onChange={setNewAmount}
+              placeholder="0"
+              suffix={<Tiny>원</Tiny>}
+            />
+            <AppInput
+              label="날짜"
+              type="date"
+              value={newDate}
+              onChange={setNewDate}
+            />
+            <AppButton onClick={handleAdd} size="md" loading={saving}>
+              저장
+            </AppButton>
           </div>
         )}
 
-        <GlassList header="이번 달 내역" className="mt-4">
-          {expenses.map((e, i) => (
-            <ListRow
-              key={e.id}
-              emoji={e.emoji}
-              title={e.title}
-              detail={`${e.amount.toLocaleString()}원 · ${isMine(e) ? "내가" : "파트너가"} 결제`}
-              isLast={i === expenses.length - 1}
-              chevron={false}
-            />
-          ))}
-        </GlassList>
+        {/* 지출 목록 */}
+        {currentMonth.length > 0 ? (
+          <GlassList header={`${currentMonth.length}개 항목`}>
+            {currentMonth
+              .sort((a, b) => b.date.getTime() - a.date.getTime())
+              .map((e) => (
+                <div key={e.id} className="flex items-center gap-2 px-4 py-3 border-b border-[var(--app-line-soft)] last:border-b-0">
+                  <div className="flex-1 min-w-0">
+                    <Body className="truncate">{e.memo || "지출"}</Body>
+                    <Meta className="text-xs mt-0.5">
+                      {format(e.date, "M월 d일 (E)", { locale: ko })} ·{" "}
+                      {e.paidBy === user?.uid ? "내가" : "파트너가"} 결제
+                    </Meta>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <Body className="font-semibold">
+                      ₩{e.amount.toLocaleString()}
+                    </Body>
+                  </div>
+                  <button
+                    onClick={() => handleDelete(e.id)}
+                    disabled={deleting === e.id}
+                    className="flex-shrink-0 p-1 rounded-full hover:bg-red-100 transition-colors"
+                    aria-label="삭제"
+                  >
+                    <Trash2
+                      className="w-4 h-4"
+                      style={{ color: deleting === e.id ? "#ccc" : "#999" }}
+                    />
+                  </button>
+                </div>
+              ))}
+          </GlassList>
+        ) : (
+          <EmptyState
+            icon="💸"
+            title="아직 기록한 지출이 없어요"
+            description="함께 쓴 비용을 기록해서 정산하기 쉽게 해봐요"
+            actionLabel="지출 기록하기"
+            onAction={() => setShowAdd(true)}
+          />
+        )}
       </div>
     </PageContainer>
   );
