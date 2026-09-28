@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { format, isSameMonth } from "date-fns";
 import { ko } from "date-fns/locale";
-import { doc, getDoc } from "firebase/firestore";
 import { Body, Meta, Tiny } from "@/components/ui/typography";
 import GlassList from "@/components/ui/glass-list";
 import AppInput from "@/components/ui/app-input";
@@ -11,7 +10,6 @@ import EmptyState from "@/components/ui/empty-state";
 import PageContainer from "@/components/layout/PageContainer";
 import PageHeader from "@/components/layout/PageHeader";
 import { useAuthStore } from "@/store/use-auth-store";
-import { db } from "@/services/firebase";
 import { subscribeExpenses, addExpense, deleteExpense, type Expense } from "@/services/expenses";
 import { calculateSettlement } from "@/lib/expense-split";
 import toast from "@/lib/toast";
@@ -27,32 +25,6 @@ const DateExpenses: React.FC = () => {
   const [newDate, setNewDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const [partnerName, setPartnerName] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!coupleId || !user) return;
-
-    // 파트너 정보 가져오기
-    const fetchPartnerName = async () => {
-      try {
-        const coupleDoc = await getDoc(doc(db, "couples", coupleId));
-        const coupleData = coupleDoc.data();
-        if (coupleData?.users) {
-          const partnerUid = coupleData.users.find((uid: string) => uid !== user.uid);
-          if (partnerUid) {
-            const userDoc = await getDoc(doc(db, "users", partnerUid));
-            const userData = userDoc.data();
-            setPartnerName(userData?.displayName || "파트너");
-          }
-        }
-      } catch {
-        setPartnerName("파트너");
-      }
-    };
-
-    fetchPartnerName();
-  }, [coupleId, user]);
-
   useEffect(() => {
     if (!coupleId) return;
     try {
@@ -162,7 +134,7 @@ const DateExpenses: React.FC = () => {
           >
             {settlement.from === user.uid ? (
               <Body>
-                내가{" "}
+                파트너에게{" "}
                 <strong style={{ color: "rgb(var(--accent-070))" }}>
                   ₩{settlement.amount.toLocaleString()}
                 </strong>
@@ -170,7 +142,7 @@ const DateExpenses: React.FC = () => {
               </Body>
             ) : (
               <Body>
-                {partnerName || "파트너"}가{" "}
+                파트너가 나에게{" "}
                 <strong style={{ color: "rgb(var(--accent-070))" }}>
                   ₩{settlement.amount.toLocaleString()}
                 </strong>
@@ -221,7 +193,7 @@ const DateExpenses: React.FC = () => {
                     <Body className="truncate">{e.memo || "지출"}</Body>
                     <Meta className="text-xs mt-0.5">
                       {format(e.date, "M월 d일 (E)", { locale: ko })} ·{" "}
-                      {e.paidBy === user?.uid ? "내가" : (partnerName || "파트너") + "가"} 결제
+                      {e.paidBy === user?.uid ? "내가" : "파트너가"} 결제
                     </Meta>
                   </div>
                   <div className="text-right flex-shrink-0">
