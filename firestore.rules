@@ -105,10 +105,20 @@ service cloud.firestore {
       allow create: if isCoupleMember(request.resource.data.coupleId);
     }
 
-    // ── 데이트 비용 — 커플 구성원만 ──
+    // ── 데이트 비용 — 커플 구성원만, 검증됨 ──
     match /expenses/{expenseId} {
       allow read, delete: if isCoupleMember(resource.data.coupleId);
-      allow create: if isCoupleMember(request.resource.data.coupleId);
+      allow create: if isCoupleMember(request.resource.data.coupleId)
+        // 금액 검증: 양의 정수, 0~999999999
+        && request.resource.data.amount is number
+        && request.resource.data.amount >= 0
+        && request.resource.data.amount <= 999999999
+        && request.resource.data.amount == int(request.resource.data.amount)
+        // paidBy 검증: 커플 멤버 중 하나
+        && request.resource.data.paidBy in get(/databases/$(database)/documents/couples/$(request.resource.data.coupleId)).data.users
+        // 필수 필드 검증
+        && request.resource.data.keys().hasAll(['coupleId', 'date', 'amount', 'paidBy', 'createdAt']);
+      // update는 허용하지 않음 (삭제 후 재작성)
     }
 
     // ── 오늘의 질문 답변 — 커플 구성원만, 본인 답변만 작성 ──

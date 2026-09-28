@@ -74,6 +74,14 @@ describe.skipIf(!hasEmulator)("firestore.rules — 커플 스코프", () => {
       await setDoc(doc(admin, "chat", COUPLE, "messages", "msg1"), {
         coupleId: COUPLE, authorId: ALICE, text: "안녕",
       });
+      await setDoc(doc(admin, "expenses", "exp1"), {
+        coupleId: COUPLE,
+        date: new Date(),
+        amount: 50000,
+        paidBy: ALICE,
+        memo: "커피",
+        createdAt: new Date(),
+      });
     });
   });
 
@@ -170,5 +178,95 @@ describe.skipIf(!hasEmulator)("firestore.rules — 커플 스코프", () => {
     await assertFails(
       setDoc(doc(db(EVE), "chat", COUPLE, "messages", "msg3"), { coupleId: COUPLE, authorId: EVE, text: "침입" })
     );
+  });
+
+  // ── expenses (데이트 비용 정산) ──
+  it("커플 멤버는 자신의 지출을 읽을 수 있다", async () => {
+    await assertSucceeds(getDoc(doc(db(ALICE), "expenses", "exp1")));
+    await assertSucceeds(getDoc(doc(db(BOB), "expenses", "exp1")));
+  });
+
+  it("제3자는 지출 읽기가 거부된다", async () => {
+    await assertFails(getDoc(doc(db(EVE), "expenses", "exp1")));
+  });
+
+  it("커플 멤버는 유효한 지출을 생성할 수 있다", async () => {
+    await assertSucceeds(
+      setDoc(doc(db(BOB), "expenses", "exp2"), {
+        coupleId: COUPLE,
+        date: new Date(),
+        amount: 30000,
+        paidBy: BOB,
+        memo: "점심",
+        createdAt: new Date(),
+      })
+    );
+  });
+
+  it("제3자는 타 커플 지출 생성이 거부된다", async () => {
+    await assertFails(
+      setDoc(doc(db(EVE), "expenses", "exp-fake"), {
+        coupleId: COUPLE,
+        date: new Date(),
+        amount: 10000,
+        paidBy: EVE,
+        createdAt: new Date(),
+      })
+    );
+  });
+
+  it("음수 금액은 거부된다", async () => {
+    await assertFails(
+      setDoc(doc(db(ALICE), "expenses", "exp-negative"), {
+        coupleId: COUPLE,
+        date: new Date(),
+        amount: -10000,
+        paidBy: ALICE,
+        createdAt: new Date(),
+      })
+    );
+  });
+
+  it("과도한 금액(999999999 초과)은 거부된다", async () => {
+    await assertFails(
+      setDoc(doc(db(ALICE), "expenses", "exp-huge"), {
+        coupleId: COUPLE,
+        date: new Date(),
+        amount: 1000000000,
+        paidBy: ALICE,
+        createdAt: new Date(),
+      })
+    );
+  });
+
+  it("잘못된 paidBy(커플 멤버 아님)는 거부된다", async () => {
+    await assertFails(
+      setDoc(doc(db(ALICE), "expenses", "exp-bad-payer"), {
+        coupleId: COUPLE,
+        date: new Date(),
+        amount: 50000,
+        paidBy: EVE, // EVE는 COUPLE의 멤버 아님
+        createdAt: new Date(),
+      })
+    );
+  });
+
+  it("필수 필드 누락은 거부된다", async () => {
+    await assertFails(
+      setDoc(doc(db(ALICE), "expenses", "exp-incomplete"), {
+        coupleId: COUPLE,
+        amount: 50000,
+        paidBy: ALICE,
+        // date와 createdAt 누락
+      })
+    );
+  });
+
+  it("커플 멤버는 지출을 삭제할 수 있다", async () => {
+    await assertSucceeds(deleteDoc(doc(db(ALICE), "expenses", "exp1")));
+  });
+
+  it("제3자는 지출 삭제가 거부된다", async () => {
+    await assertFails(deleteDoc(doc(db(EVE), "expenses", "exp1")));
   });
 });
